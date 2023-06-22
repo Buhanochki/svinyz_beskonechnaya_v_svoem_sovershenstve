@@ -28,9 +28,17 @@ class Gui():
         return list(map(int, self.canvas.coords(ball_id)))
     
     def click(self, event):
-        for ball in range(len(self.sprites)):
-            if event.x in range(self.get_coords(self.sprites[ball].oval)[0], self.get_coords(self.sprites[ball].oval)[2]) and event.y in range(self.get_coords(self.sprites[ball].oval)[1], self.get_coords(self.sprites[ball].oval)[3]):
-                self.sprites[ball].delete_ball()
+        print(self.sprites)
+        for ball in self.sprites:
+            coords = self.get_coords(ball.oval)
+            if event.x in range(coords[0],coords[2]) and event.y in range(coords[1], coords[3]):
+                print(ball)
+                ball.delete_ball()
+                ball.create_child(-1, 1)
+                
+                del self.sprites[self.sprites.index(ball)]
+                break
+                '''
                 crd = self.get_coords(self.sprites[ball].oval)
                 self.sprites.append(self.sprites[ball].create_child(-1, 1))
                 self.sprites.append(self.sprites[ball].create_child(1, -1))
@@ -40,14 +48,15 @@ class Gui():
                 self.sprites.append(self.sprites[ball].create_child(0, -1))
                 self.sprites.append(self.sprites[ball].create_child(1, 0))
                 self.sprites.append(self.sprites[ball].create_child(1, 1))
-                del self.sprites[ball]
+                del self.sprites[ball]'''
 
     def mainloop(self):
         while True:
-            self.sprites[0].move()
+            for ball in self.sprites:
+                ball.move()
             time.sleep(0.01)
             self.tk.update()
-            print(len(self.sprites))
+            #print(len(self.sprites))
 class Ball():
     def __init__(self, gui: Gui , vel_x, vel_y, center_x, center_y, radius):
 
@@ -67,6 +76,7 @@ class Ball():
         work.do()'''
     def move(self):
         self.crd = self.gui.canvas.coords(self.oval)
+        #print(self.crd)
         if self.crd[0] <= 0:
             self.vel_x *= -1
         if self.crd[1] <= 0:
@@ -86,7 +96,7 @@ class Ball():
         self.gui.canvas.delete(self.oval)
         
     def create_child(self, vel_x, vel_y):
-        self.gui.sprites.append(Ball(vel_x=vel_x, vel_y=vel_y, radius=self.radius / 2, center_x=self.center_x, center_y=self.center_y)) 
+        self.gui.sprites.append(Ball(gui=self.gui, vel_x=vel_x, vel_y=vel_y, radius=self.radius - 5, center_x=self.center_x, center_y=self.center_y)) 
            
 g = Gui('geometry', 500, 20, 'black')
 g.create_ball(1, 1)
