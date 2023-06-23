@@ -2,6 +2,7 @@ from tkinter import *
 import time
 
 class Gui():
+    colesa = [(-1, 1),(1, -1),(0, 1),(-1, 0),(0, -1),(1, 0),(-1, -1),(1, 1)]
     def __init__(self, title, side_size, padding, background_color):
         self.title = title
         self.background_color = background_color
@@ -30,25 +31,20 @@ class Gui():
     def click(self, event):
         print(self.sprites)
         for ball in self.sprites:
-            coords = self.get_coords(ball.oval)
-            if event.x in range(coords[0],coords[2]) and event.y in range(coords[1], coords[3]):
-                print(ball)
-                ball.delete_ball()
-                ball.create_child(-1, 1)
+            
+                coords = self.get_coords(ball.oval)
+                if event.x in range(coords[0],coords[2]) and event.y in range(coords[1], coords[3]):
+                    if ball.radius > 5:
+                        print(ball)
+                        ball.delete_ball()
+                        for e in range(8):
+                            ball.create_child(self.colesa[e][0], self.colesa[e][1])
+                        del self.sprites[self.sprites.index(ball)]
+                        break
+                    else:
+                        ball.delete_ball()
+                        del self.sprites[self.sprites.index(ball)]
                 
-                del self.sprites[self.sprites.index(ball)]
-                break
-                '''
-                crd = self.get_coords(self.sprites[ball].oval)
-                self.sprites.append(self.sprites[ball].create_child(-1, 1))
-                self.sprites.append(self.sprites[ball].create_child(1, -1))
-                self.sprites.append(self.sprites[ball].create_child(-1, -1))
-                self.sprites.append(self.sprites[ball].create_child(0, 1))
-                self.sprites.append(self.sprites[ball].create_child(-1, 0))
-                self.sprites.append(self.sprites[ball].create_child(0, -1))
-                self.sprites.append(self.sprites[ball].create_child(1, 0))
-                self.sprites.append(self.sprites[ball].create_child(1, 1))
-                del self.sprites[ball]'''
 
     def mainloop(self):
         while True:
