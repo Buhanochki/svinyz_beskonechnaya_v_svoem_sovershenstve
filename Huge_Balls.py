@@ -32,6 +32,8 @@ class Gui():
         self.restart_button.config(command=self.restart)
         self.restart_button.place(x=padding, y = self.side_size + self.padding + 5)
 
+        self.game = True
+
     def create_ball(self, x, y):
         self.sprites.append(Ball(self,vel_x=x, vel_y=y, center_x=200, center_y=200, radius=20))
     def restart(self):
@@ -42,11 +44,13 @@ class Gui():
         self.counter = 0
         self.time_counter.config(text='0.00')
         self.time_start = time.time()
+        self.game = True
         self.create_ball(1,1)
     def clear_field(self):
         for ball in self.sprites:
             ball.delete_ball()
         self.sprites = []
+        self.game = False
 
     def get_coords(self, ball_id):
         return list(map(int, self.canvas.coords(ball_id)))
@@ -69,13 +73,14 @@ class Gui():
 
     def mainloop(self):
         while True:
+            
             for ball in self.sprites:
                 ball.move()
                 self.score_counter.config(text=str(self.counter))
                 self.time_counter.config(text=str(round(time.time() - self.time_start, 2)))
                 print(round(time.time() - self.time_start, 2) > 30.00)
-                if round(time.time() - self.time_start, 2) > 30.00:
-                    self.clear_field
+                if round(time.time() - self.time_start, 2) > 10.00:
+                    self.clear_field()
             time.sleep(0.01)
             self.tk.update()
             #print(len(self.sprites))
@@ -97,18 +102,19 @@ class Ball():
     '''def __proletariat(self):
         work.do()'''
     def move(self):
-        self.crd = self.gui.canvas.coords(self.oval)
-        #print(self.crd)
-        if self.crd[0] <= 0:
-            self.vel_x *= -1
-        if self.crd[1] <= 0:
-            self.vel_y *= -1
-        if self.crd[2] >= 500   :
-            self.vel_x *= -1
-        if self.crd[3] >= 500:
-            self.vel_y *= -1
-        self.gui.canvas.move(self.oval, self.vel_x, self.vel_y)
-        self.center_update()
+        if self.gui.game == True:
+            self.crd = self.gui.canvas.coords(self.oval)
+            #print(self.crd)
+            if self.crd[0] <= 0:
+                self.vel_x *= -1
+            if self.crd[1] <= 0:
+                self.vel_y *= -1
+            if self.crd[2] >= 500   :
+                self.vel_x *= -1
+            if self.crd[3] >= 500:
+                self.vel_y *= -1
+            self.gui.canvas.move(self.oval, self.vel_x, self.vel_y)
+            self.center_update()
 
     def center_update(self):
         self.center_y += self.vel_y
